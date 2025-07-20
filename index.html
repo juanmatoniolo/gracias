@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gracias por tu compra</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f7f7f7;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .mensaje {
+      max-width: 500px;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .mensaje h1 {
+      color: #2b9348;
+      margin-bottom: 1rem;
+    }
+    .mensaje p {
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="mensaje">
+    <h1>¡Gracias por tu compra!</h1>
+    <p>Estamos procesando tu pedido. En breve recibirás un correo con los detalles.</p>
+    <p id="estado"></p>
+  </div>
+
+  <script>
+    const API = {
+      registrarVenta: 'http://localhost/bal/api/registrarVenta.php'
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const collectionId = params.get('collection_id');
+
+    const datosVenta = JSON.parse(localStorage.getItem('datosVenta'));
+
+    if (collectionId && datosVenta) {
+      const datosFinales = {
+        ...datosVenta,
+        collection_id: collectionId
+      };
+
+      fetch(API.registrarVenta, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosFinales)
+      })
+      .then(res => res.ok ? res.json() : Promise.reject('Error en el servidor'))
+      .then(data => {
+        console.log("Venta registrada:", data);
+        document.getElementById('estado').textContent = "Tu compra ha sido registrada con éxito.";
+        localStorage.removeItem('datosVenta');
+        localStorage.removeItem('carrito'); // Si lo usás con contexto global
+      })
+      .catch(err => {
+        console.error("Error al guardar venta:", err);
+        document.getElementById('estado').textContent = "Ocurrió un problema al registrar la compra.";
+      });
+    } else {
+      document.getElementById('estado').textContent = "Faltan datos de la compra.";
+    }
+  </script>
+</body>
+</html>
