@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Redirigiendo...</title>
-  <meta http-equiv="refresh" content="0; url=http://localhost:3000/gracias-por-tu-compra" />
+  <script>
+    // Esperamos a que cargue todo el documento
+    window.onload = function () {
+      const params = new URLSearchParams(window.location.search);
+      const collection_id = params.get('collection_id');
+      const status = params.get('status');
+      const payment_id = params.get('payment_id');
+      const preference_id = params.get('preference_id');
+
+      // Redirigimos a tu localhost incluyendo los parámetros
+      const redirURL = `http://localhost:3000/gracias-por-tu-compra?collection_id=${collection_id}&status=${status}&payment_id=${payment_id}&preference_id=${preference_id}`;
+
+      window.location.href = redirURL;
+    };
+  </script>
 </head>
 
 <body>
